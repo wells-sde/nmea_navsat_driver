@@ -18,4 +18,6 @@
     <param name="useRMC" value="$(arg useRMC)" />
   </node>
 
+  <!-- <node name="navsatfix_to_odom_node" pkg="nmea_navsat_driver" type="navsatfix_to_odom.py" output="screen" /> -->
+
 </launch>
