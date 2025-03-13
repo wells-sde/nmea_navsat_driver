@@ -23,11 +23,13 @@ class NavSatFixToOdom:
         rospy.Subscriber('/fix', NavSatFix, self.navsatfix_callback)
         
     def navsatfix_callback(self, msg):
+        # 用gnss status过滤掉无效的GPS定位数据
         if msg.status.status == NavSatStatus.STATUS_NO_FIX:
         # if msg.status.status != NavSatStatus.STATUS_GBAS_FIX:  # RTK Fix
             print("No fix")
             return
         
+        # 以第一个有效的GPS定位作为ENU坐标原点
         if not self.first_fix_received:
             if msg.status.status != NavSatStatus.STATUS_NO_FIX:
             # if msg.status.status == NavSatStatus.STATUS_GBAS_FIX:  # RTK Fix
@@ -54,6 +56,7 @@ class NavSatFixToOdom:
         odom.pose.pose.position.x = enu_x
         odom.pose.pose.position.y = enu_y
         odom.pose.pose.position.z = enu_z
+        # odom pose covariance is a 6x6 matrix
         odom.pose.covariance[0:3] = msg.position_covariance[0:3]
         odom.pose.covariance[6:9] = msg.position_covariance[3:6]
         odom.pose.covariance[12:15] = msg.position_covariance[6:9]
