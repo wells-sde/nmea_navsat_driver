@@ -10,6 +10,8 @@ rosbag record /fix /vel /heading /time_reference
 #optional, visualize gnss position online with topic /gps_odom and /gps_path
 #only publish valid GNSS position(status > 0) 
 python3 ./src/nmea_navsat_driver/src/libnmea_navsat_driver/nodes/navsatfix_to_odom.py
+#only publish RTK Fix position
+python3 ./src/nmea_navsat_driver/src/libnmea_navsat_driver/nodes/navsatfix_to_odom.py --ONLY_USE_RTK_FIX
 rviz
 ```
 
