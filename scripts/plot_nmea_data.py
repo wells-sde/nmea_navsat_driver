@@ -1,8 +1,10 @@
+import os
 import re
 import utm
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import csv
+import argparse
 
 def parse_nmea_line(line):
     """Parse a NMEA GGA line and return the time, latitude, longitude, altitude, and fix type."""
@@ -72,7 +74,12 @@ def plot_gps_track(eastings, northings, altitudes):
     plt.show()
 
 if __name__ == '__main__':
-    filepath = '/media/airs/E/PROJECTS/rtk_gnss_ws/data/25-2-26/16-56-14.TXT'
+    # Parse command-line arguments
+    parser = argparse.ArgumentParser(description='Process NMEA file and plot GPS data.')
+    parser.add_argument('filepath', type=str, help='Path to the NMEA file')
+    args = parser.parse_args()
+
+    filepath = args.filepath
     times, latitudes, longitudes, altitudes, fix_types = read_nmea_file(filepath)
 
     # 过滤出有效的GPS定位数据
@@ -98,7 +105,9 @@ if __name__ == '__main__':
         # for i in range(min(10, len(enu_x))):
         #     print(f"Time: {valid_times[i]}, ENU X: {enu_x[i]}, ENU Y: {enu_y[i]}, ENU Z: {enu_z[i]}")
         # 保存valid_times, enu_x, enu_y, enu_z到csv文件
-        with open('/media/airs/E/PROJECTS/rtk_gnss_ws/data/25-2-26/16-56-14-enu_coordinates.csv', 'w', newline='') as csvfile:
+        output_dir = os.path.dirname(filepath)
+        output_file = os.path.join(output_dir, 'enu_coordinates.csv')
+        with open(output_file, 'w', newline='') as csvfile:
             csvwriter = csv.writer(csvfile)
             csvwriter.writerow(['Time', 'ENU X', 'ENU Y', 'ENU Z'])
             for time, x, y, z in zip(valid_times, enu_x, enu_y, enu_z):
